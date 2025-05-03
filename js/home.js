@@ -3,24 +3,9 @@
 import StorageManager from '../modules/StorageModule.js'
 import UserManager from '../modules/UserModule.js';
 
-// Add Static ADMIN in Local Storage in Section Users and whenn open even not there are users will reload local storage with admin
 const users = StorageManager.LoadSection("users") || [];
 const adminExists = users.some(user => user.id === 0 && user.role === "admin");
 
-// if (!adminExists) {
-//     const staticAdmin = {
-//         id: 0,
-//         name: "Admin User",
-//         email: "admin@gmail.com",
-//         password: "admin123",
-//         role: "admin"
-//     };
-//     users.push(staticAdmin);
-//     StorageManager.SaveSection("users", users);
-//     console.log("Static admin added.");
-// }
-
-// Show and hide modal
 const modal = document.getElementById("registerModal");
 const icon = document.getElementById("Register-Icon");
 const closeBtn = document.getElementById("closePopup");
@@ -38,8 +23,6 @@ document.getElementById('toggleToSignUp').onclick = function () {
 icon.onclick = () => modal.classList.remove('d-none');
 closeBtn.onclick = () => modal.classList.add('d-none');
 
-
-// Password eyeIcon
 const eyeIcon = document.getElementById("eyeIcon");
 const password = document.getElementById("password");
 eyeIcon.onclick = () => {
@@ -73,7 +56,6 @@ window.Save = function (event) {
 
     // Add New Users with Incremental IDs
     UserManager.AddUser(name, email, password);
-    UserManager.AddUser(name, email, password);
 }
 
 window.Login = function (event) {
@@ -85,6 +67,7 @@ window.Login = function (event) {
     const users = StorageManager.LoadSection("users") || [];
     const LoginUser = users.find(user => user.email === email && user.password === password);
 
+<<<<<<< Updated upstream
     if (LoginUser) {
         // Store user data for session management
         sessionStorage.setItem('userLoggedIn', JSON.stringify(LoginUser));
@@ -92,6 +75,15 @@ window.Login = function (event) {
         sessionStorage.setItem('userId', LoginUser.id);
         sessionStorage.setItem('userRole', LoginUser.role);
 
+=======
+    const LoginUser = users.find(user => user.email === email);
+    if (!LoginUser) {
+        alert("Email does not exist. Please register first.");
+    } else if (LoginUser.password !== password) {
+        alert("Incorrect password. Please try again.");
+    }
+    else {
+>>>>>>> Stashed changes
         switch (LoginUser.role) {
             case "customer":
                 sessionStorage.setItem('userLoggedIn', JSON.stringify(LoginUser));
@@ -160,6 +152,7 @@ document.getElementById("logout")?.addEventListener("click", () => {
 });
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // Initialize cart for current user
 document.addEventListener('DOMContentLoaded', function() {
     // Ensure cart has a user ID (logged in or guest)
@@ -170,44 +163,73 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 =======
 
+=======
+>>>>>>> Stashed changes
 function CreateFeaturedProducts(products) {
-    var content = document.getElementById("content");
-    for (var i = 1; i <= 9; i++) {
-        var product = products[getRandomValues(1, 25)];
-        var cards = `
-        <div class = "col-12 col-sm-6 col-lg-3 mb-4 ">
-          <div class="card h-100 position-relative text-center p-3">
+    if (!products || !Array.isArray(products) || products.length === 0) {
+        console.error("No products available or invalid products data");
+        return;
+    }
 
+    const content = document.getElementById("content");
+    if (!content) return;
+
+    // Clear existing content
+    content.innerHTML = '';
+
+    // Create a copy of products array to avoid modifying the original
+    const availableProducts = [...products];
+    
+    // Determine how many products to show (up to 9 or available products count)
+    const productCount = Math.min(9, availableProducts.length);
+    
+    // Create a set to track used indices to avoid duplicates
+    const usedIndices = new Set();
+
+    for (let i = 0; i < productCount; i++) {
+        let randomIndex;
+        do {
+            randomIndex = getRandomValues(0, availableProducts.length - 1);
+        } while (usedIndices.has(randomIndex) && usedIndices.size < availableProducts.length);
+        
+        usedIndices.add(randomIndex);
+        const product = availableProducts[randomIndex];
+
+        if (!product) continue;
+
+        const card = `
+        <div class="col-12 col-sm-6 col-lg-3 mb-4">
+          <div class="card h-100 position-relative text-center p-3">
             <!-- Buttons for heart and eye icons -->
             <div class="position-absolute top-0 end-0 m-2 d-flex flex-column gap-2">
               <button class="btn btn-light rounded-circle shadow-sm">
                 <i class="bi bi-heart"></i>
               </button>
-              <a href="product-details.html?id=${product.id}" class="text-decoration-none">
-              <button class="btn btn-light rounded-circle shadow-sm">
-                <i class="bi bi-eye"></i>
-              </button>
+              <a href="product-details.html?id=${product.id || ''}" class="text-decoration-none">
+                <button class="btn btn-light rounded-circle shadow-sm">
+                  <i class="bi bi-eye"></i>
+                </button>
               </a>
             </div>
             
-            <a href="product-details.html?id=${product.id}" class="text-decoration-none">
-              <img src="${product.image}" class="card-img-top  mx-auto" style="max-width: 60%; height:200px">
-                <div class="card-body d-flex flex-column justify-content-between ">
-                <h5 class="card-title fw-semibold mb-2  ">${product.name}</h5>
-                <p class="text-muted small">${product.description}</p>
-            </div>
+            <a href="product-details.html?id=${product.id || ''}" class="text-decoration-none">
+              <img src="${product.image || ''}" class="card-img-top mx-auto" style="max-width: 60%; height:200px" alt="${product.name || ''}">
+              <div class="card-body d-flex flex-column justify-content-between">
+                <h5 class="card-title fw-semibold mb-2">${product.name || 'No name'}</h5>
+                <p class="text-muted small">${product.description || 'No description'}</p>
+              </div>
             </a>
 
             <!-- Card Footer with Price and Add to Cart Button -->
             <div class="card-footer bg-white border-0">
               <div class="d-flex justify-content-between align-items-center">
-                <span class="fw-bold">$${product.price}</span>
+                <span class="fw-bold">$${product.price || '0.00'}</span>
                 <button class="btn btn-outline-dark btn-sm text-body-emphasis p-2 fw-semibold" 
                         onclick="addToCart({
-                          id: ${product.id}, 
-                          name: '${product.name}', 
-                          price: ${product.price}, 
-                          image: '${product.image}'
+                          id: ${product.id || 0}, 
+                          name: '${product.name || ''}', 
+                          price: ${product.price || 0}, 
+                          image: '${product.image || ''}'
                         })">
                   Add to cart
                 </button>
@@ -215,10 +237,9 @@ function CreateFeaturedProducts(products) {
             </div>
           </div>
         </div>
-       `;
-       content.innerHTML += cards;
+        `;
+        content.innerHTML += card;
     }
-
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -231,6 +252,13 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById("Register-Icon")?.classList.remove("d-none");
         document.getElementById("userDropdown")?.classList.add("d-none");
     }
+<<<<<<< Updated upstream
     CreateFeaturedProducts(StorageManager.LoadSection("products"));
+});
+>>>>>>> Stashed changes
+=======
+
+    const products = StorageManager.LoadSection("products") || [];
+    CreateFeaturedProducts(products);
 });
 >>>>>>> Stashed changes
