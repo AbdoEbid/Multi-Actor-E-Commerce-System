@@ -12,7 +12,7 @@ const icon = document.getElementById("Register-Icon");
 const closeBtn = document.getElementById("closePopup");
 
 function getRandomValues(min, max) {
-    return ((Math.floor(Math.random() * (max - min + 1)) + min);
+    return ((Math.floor(Math.random() * (max - min + 1)) + min));
 }
 
 document.getElementById('toggleToLogin').onclick = function () {
