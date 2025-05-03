@@ -1,14 +1,19 @@
-
 // ------------------------------Register/Login Start------------------------------
 import StorageManager from '../modules/StorageModule.js'
 import UserManager from '../modules/UserModule.js';
 
+// Add Static ADMIN in Local Storage in Section Users and whenn open even not there are users will reload local storage with admin
 const users = StorageManager.LoadSection("users") || [];
 const adminExists = users.some(user => user.id === 0 && user.role === "admin");
 
+// Show and hide modal
 const modal = document.getElementById("registerModal");
 const icon = document.getElementById("Register-Icon");
 const closeBtn = document.getElementById("closePopup");
+
+function getRandomValues(min, max) {
+    return ((Math.floor(Math.random() * (max - min + 1)) + min);
+}
 
 document.getElementById('toggleToLogin').onclick = function () {
     document.getElementById('signUpForm').style.display = 'none';
@@ -23,6 +28,7 @@ document.getElementById('toggleToSignUp').onclick = function () {
 icon.onclick = () => modal.classList.remove('d-none');
 closeBtn.onclick = () => modal.classList.add('d-none');
 
+// Password eyeIcon
 const eyeIcon = document.getElementById("eyeIcon");
 const password = document.getElementById("password");
 eyeIcon.onclick = () => {
@@ -65,17 +71,7 @@ window.Login = function (event) {
     const password = document.getElementById("loginPassword").value;
 
     const users = StorageManager.LoadSection("users") || [];
-    const LoginUser = users.find(user => user.email === email && user.password === password);
 
-<<<<<<< Updated upstream
-    if (LoginUser) {
-        // Store user data for session management
-        sessionStorage.setItem('userLoggedIn', JSON.stringify(LoginUser));
-        // Store user ID for cart functionality
-        sessionStorage.setItem('userId', LoginUser.id);
-        sessionStorage.setItem('userRole', LoginUser.role);
-
-=======
     const LoginUser = users.find(user => user.email === email);
     if (!LoginUser) {
         alert("Email does not exist. Please register first.");
@@ -83,7 +79,6 @@ window.Login = function (event) {
         alert("Incorrect password. Please try again.");
     }
     else {
->>>>>>> Stashed changes
         switch (LoginUser.role) {
             case "customer":
                 sessionStorage.setItem('userLoggedIn', JSON.stringify(LoginUser));
@@ -109,62 +104,15 @@ window.Login = function (event) {
             default:
                 alert("Invalid role. Please try again.");
         }
-    } else {
-        alert("Invalid email or password. Please try again.");
     }
 };
 // ------------------------------Register/Login End------------------------------
 
-<<<<<<< Updated upstream
-window.addEventListener('DOMContentLoaded', () => {
-    const loggedInUser = JSON.parse(sessionStorage.getItem('userLoggedIn'));
-
-    // Set up UI based on login status
-    if (loggedInUser) {
-        document.getElementById("Register-Icon")?.classList.add("d-none");
-        document.getElementById("userDropdown")?.classList.remove("d-none");
-        
-        // Ensure cart has the correct user ID even after page refresh
-        if (!sessionStorage.getItem('userId')) {
-            sessionStorage.setItem('userId', loggedInUser.id);
-            sessionStorage.setItem('userRole', loggedInUser.role);
-        }
-    } else {
-        document.getElementById("Register-Icon")?.classList.remove("d-none");
-        document.getElementById("userDropdown")?.classList.add("d-none");
-        
-        // Set guest ID for cart if no user is logged in
-        if (!sessionStorage.getItem('userId')) {
-            sessionStorage.setItem('userId', 'guest');
-        }
-    }
-});
-
-document.getElementById("logout")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    
-    // Clear all user session data
-=======
 document.getElementById("logout")?.addEventListener("click", () => {
->>>>>>> Stashed changes
     sessionStorage.removeItem("userLoggedIn");
     location.reload();
 });
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-// Initialize cart for current user
-document.addEventListener('DOMContentLoaded', function() {
-    // Ensure cart has a user ID (logged in or guest)
-    if (!sessionStorage.getItem('userId')) {
-        const loggedInUser = JSON.parse(sessionStorage.getItem('userLoggedIn'));
-        sessionStorage.setItem('userId', loggedInUser ? loggedInUser.id : 'guest');
-    }
-});
-=======
-
-=======
->>>>>>> Stashed changes
 function CreateFeaturedProducts(products) {
     if (!products || !Array.isArray(products) || products.length === 0) {
         console.error("No products available or invalid products data");
@@ -252,13 +200,7 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById("Register-Icon")?.classList.remove("d-none");
         document.getElementById("userDropdown")?.classList.add("d-none");
     }
-<<<<<<< Updated upstream
-    CreateFeaturedProducts(StorageManager.LoadSection("products"));
-});
->>>>>>> Stashed changes
-=======
 
     const products = StorageManager.LoadSection("products") || [];
     CreateFeaturedProducts(products);
 });
->>>>>>> Stashed changes

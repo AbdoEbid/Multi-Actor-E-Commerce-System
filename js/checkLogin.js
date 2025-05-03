@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const checkout = document.getElementById("checkout");
-<<<<<<< Updated upstream
-=======
   
->>>>>>> Stashed changes
   checkout.addEventListener("click", (e) => {
       e.preventDefault();
       
