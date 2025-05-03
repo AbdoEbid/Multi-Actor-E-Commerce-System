@@ -1,9 +1,10 @@
 // ------------------------------- Cart-Slider functions start
 let cartItems = [];
 
-// Helper function to get current user ID
+// Helper function to get current user ID (returns number for logged-in users)
 function getCurrentUserId() {
-  return sessionStorage.getItem('userId') || 'guest';
+  const userId = sessionStorage.getItem('userLoggedIn');
+  return userId ? (userId.id) : 'guest';
 }
 
 // Helper function to get the full data object from localStorage
@@ -12,33 +13,65 @@ function getAppData() {
   return storedData ? JSON.parse(storedData) : { users: [], products: [], orders: [], cart: [] };
 }
 
-// Helper function to save the current cart
+// Helper function to save the current cart with proper structure
 function saveCurrentCart() {
   const data = getAppData();
   const userId = getCurrentUserId();
   
+  // Calculate total amount
+  const totalAmount = cartItems.reduce((sum, item) => {
+    const itemPrice = typeof item.price === 'number' ? item.price : 0;
+    const itemQuantity = typeof item.quantity === 'number' ? item.quantity : 0;
+    return sum + (itemPrice * itemQuantity);
+  }, 0);
+
   // Find existing cart for user or create new one
   let userCart = data.cart.find(c => c.userId === userId);
   
   if (userCart) {
-    userCart.products = cartItems;
+    userCart.products = cartItems.map(item => ({
+      productId: item.id,
+      quantity: item.quantity
+    }));
+    userCart.totalAmount = totalAmount;
   } else {
     data.cart.push({
       userId: userId,
-      products: cartItems
+      products: cartItems.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      })),
+      totalAmount: totalAmount
     });
   }
   
   localStorage.setItem('data', JSON.stringify(data));
 }
 
-// Initialize cart
+// Initialize cart - converts stored format to working format
 function initCart() {
   const data = getAppData();
   const userId = getCurrentUserId();
   
   const userCart = data.cart.find(c => c.userId === userId);
-  cartItems = userCart && Array.isArray(userCart.products) ? userCart.products : [];
+  
+  if (userCart && Array.isArray(userCart.products)) {
+    // Convert stored cart format to our working format
+    cartItems = userCart.products.map(item => {
+      const product = data.products.find(p => p.id === item.productId);
+      return product ? {
+        id: product.id,
+        userId: userId,
+        name: product.name || 'Unknown Product',
+        price: typeof product.price === 'number' ? product.price : 0,
+        image: product.image || '',
+        stock: typeof product.stock === 'number' ? product.stock : 50,
+        quantity: typeof item.quantity === 'number' ? item.quantity : 1
+      } : null;
+    }).filter(item => item !== null);
+  } else {
+    cartItems = [];
+  }
   
   updateCartCount();
 }
